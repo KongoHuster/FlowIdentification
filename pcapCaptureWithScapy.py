@@ -99,7 +99,7 @@ def process(command,path):
         # print("64个数据包中" + str(dict_10class_malware[position]) + "的个数:" + str(number))
         print(malware_list)
 
-        if numberFirst > 10:
+        if numberFirst >= 1:
             print("警告：存在恶意流量")
 	    print("恶意流量的个数为:" + str(len(malware_list)))
             # printPcapInformation(malware_path)
@@ -108,6 +108,9 @@ def process(command,path):
                 print(str(filesSize)+"个流中" + str(positionSecond) + "的个数:" + str(numberSecond) + ",所占总比例为%.3f" % (numberSecond/filesSize))
             if (positionThird != -1):
                 print(str(filesSize)+"个流中" + str(positionThird) + "的个数:" + str(numberThird) + ",所占总比例为%.3f" % (numberThird/filesSize))
+	    message = str(count) + " " + str(filesSize)  + " " + str(len(malware_list)) + " "+ str(positionFirst) + " " + str(numberFirst) + " "  + str(positionSecond) + " " + str(numberSecond) + " " + str(positionThird) + " " + str(numberThird)
+	    messageList.append(message)
+	    print(message)
         else:
             print("无恶意流量")
 
@@ -136,7 +139,7 @@ if __name__ == "__main__":
     p = os.popen("rm ./Pcap/*")
 
     count = 0
-
+    messageList = []
     # filter="src host 192.168.171.143 or dst host 192.168.171.143",
     print("模型加载完成")
     while True:
@@ -169,4 +172,7 @@ if __name__ == "__main__":
         #     print("IndexError error\n")
 
         count = count + 1
+	if count >=1:
+	   for message in messageList:
+ 	   	print(message)
 
