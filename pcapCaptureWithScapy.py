@@ -101,6 +101,7 @@ def process(command,path):
 
         if numberFirst > 10:
             print("警告：存在恶意流量")
+	    print("恶意流量的个数为:" + str(len(malware_list)))
             # printPcapInformation(malware_path)
             print(str(filesSize)+"个流中" + str(positionFirst) + "的个数:" + str(numberFirst) + ",所占总比例为%.3f" % (numberFirst/filesSize))
             if (positionSecond != -1):
@@ -119,12 +120,14 @@ def process(command,path):
 
 if __name__ == "__main__":
     t1 = timer()
-    model1 = load_model('./LeNet-5Of2FlowAllLayersClass.h5')
-    model2 = load_model('./LeNet-5Of10MalwareFlowAllLayersClass.h5') #10分类恶意
+    #model1 = load_model('./LeNet-5Of2FlowAllLayersClass.h5')
+    #model2 = load_model('./LeNet-5Of10MalwareFlowAllLayersClass.h5') #10分类恶意
+    model1 = load_model('./LeNet-5Of2SessionAllLayersClass.h5')
+    model2 = load_model('./LeNet-5Of10SessionAllLayersClass.h5') #10分类恶意
     model3 = load_model('./LetNet5Of10BenignFlowAllLayers.h5') #10分类正常
     t2 = timer()
     print("模型加载时间" + str(t2-t1))
-    dict_10class_malware = {0:'Cridex',1:'Botnet',2:'Htbot',3:'Miuref',4:'SshAttack',5:'Dedrop',6:'Shifu',7:'Tinba',8:'Virut',9:'Nmap'}
+    dict_10class_malware = {0:'Cridex',1:'Botnet',2:'Htbot',3:'Miuref',4:'SshAttack',5:'Dedrop',6:'Shifu',7:'Tinba',8:'Neris',9:'Nmap'}
     dict_10class_benign = {0:'MySQL',1:'Web',2:'BitTorrent',3:'FTP',4:'Gmail',5:'JianShu',6:'Skype',7:'WorldOfWarcraft',8:'WeiBo',9:'Facetime'}
 
     PNG_SIZE = 28
@@ -147,10 +150,11 @@ if __name__ == "__main__":
         if not os.path.exists(path):
             os.makedirs(path)
 
-	command = "tcpdump -i ens33 -n -B 919400 -c 1000 -w " + filename
+	command = "tcpdump -i ens33 -n -B 919400 -c 9999 -w " + filename
 	os.system(command)
 	print("Capture over")
-        command = 'mono SplitCap.exe -r '+ filename + ' -o ' + "./PcapSplit/demo" + str(count)  + ' -s flow -p 1017'
+        #command = 'mono SplitCap.exe -r '+ filename + ' -o ' + "./PcapSplit/demo" + str(count)  + ' -s flow -p 1017'
+        command = 'mono SplitCap.exe -r '+ filename + ' -o ' + "./PcapSplit/demo" + str(count)  + ' -s session -p 1017'
         print(command)
         try:
             thread1 = threading.Thread(target=process,args=(command,path))
